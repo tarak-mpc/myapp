@@ -1,0 +1,39 @@
+{
+  "namespace": "org.tcb.avro",
+  "type": "record",
+  "name": "type_b",
+  "fields": [
+    {
+      "name": "NUMERO",
+      "type": [ "long", "null" ]
+    },
+    {
+      "name": "ID",
+      "type": ["string", "null" ]
+    },
+    {
+      "name": "CODE_MESSAGE",
+      "type": ["string", "null" ]
+    },
+    {
+      "name": "void1",
+      "type": "null"
+    },
+    {
+      "name": "DATE_ACTION_COMMERCIALE",
+      "type": ["string", "null" ]
+    },
+    {
+      "name": "void2",
+      "type": "null"
+    },
+    {
+      "name": "CIVILITE",
+      "type": ["string", "null" ]
+    },
+    {
+      "name": "NOM",
+      "type": ["string", "null" ]
+    }
+  ]
+}
