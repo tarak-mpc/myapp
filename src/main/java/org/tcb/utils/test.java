@@ -22,11 +22,17 @@ public class test {
 
         //Iterate the arraylist
         for(String value: fieldValues)  {
-            func(value);
+           System.out.println(value);
+
+
+        }
+        for(String value: fieldValues)  {
+            System.out.println(value);
+
 
         }
     }
 
-    private static void func(String value) {
+
     }
-}
+
