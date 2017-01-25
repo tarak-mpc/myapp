@@ -7,8 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
@@ -39,6 +38,60 @@ public class HbaseDAO {
         }
     }
 
+
+
+    public void createNamespace(String _namespaceName) {
+        try {
+            TableName[] tbls = admin.listTableNamesByNamespace(_namespaceName);
+            for (TableName tbl : tbls) {
+                admin.disableTable(tbl);
+                admin.deleteTable(tbl);
+            }
+            admin.deleteNamespace(_namespaceName);
+            NamespaceDescriptor namespace = NamespaceDescriptor.create(_namespaceName).build();
+            admin.createNamespace(namespace);
+        } catch (IOException e) {
+        }
+        try {
+            System.out.println("Creating namespace " + _namespaceName + "...");
+            NamespaceDescriptor namespace = NamespaceDescriptor.create(_namespaceName).build();
+            admin.createNamespace(namespace);
+            System.out.println("Name Space: " + _namespaceName + " Created.");
+        } catch (IOException e) {
+
+        }
+
+    }
+
+    public void createTable(String _nameSpace, String _tableName,String... _columnFamilys) {
+        TableName tableName = TableName.valueOf(_nameSpace+":"+_tableName);
+        HTableDescriptor desc = new HTableDescriptor(tableName);
+
+        try {
+            admin.disableTable(tableName);
+            admin.deleteTable(tableName);
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+
+        }
+
+        for(String colFamily: _columnFamilys){
+            HColumnDescriptor coldef = new HColumnDescriptor(Bytes.toBytes(colFamily));
+            desc.addFamily(coldef);
+        }
+
+        System.out.println("Creating table " +_nameSpace+":"+_tableName +"...");
+
+        try {
+            admin.createTable(desc);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("Table: " + _nameSpace +":"+_tableName + " Created");
+
+    }
+
     public void closeConnection() {
         try {
             this.connection.close();
@@ -48,7 +101,7 @@ public class HbaseDAO {
         }
     }
 
-    public void save(String _tableName, String _columnFamily, String _columnName, String id, String _value) {
+    public void save(String _tableName, String _columnFamily, String _columnName, String id, Object _value) {
         if (_DEBUG)
             System.out.println("Saving value...");
         try {
@@ -135,6 +188,9 @@ public class HbaseDAO {
 
     public static final void main(String... args) {
         HbaseDAO hbDAO = new HbaseDAO();
+        //ah.createNamespace("atm");
+        hbDAO.createTable("myapp","tableA","colFam");
+
 //        System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "1", "GeoLoc"));
 //        System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "2", "Total", "GeoLoc"));
 //        System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "3", "Total", "GeoLoc"));

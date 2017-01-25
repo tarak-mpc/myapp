@@ -10,16 +10,19 @@ import org.tcb.dao.HbaseDAO;
 
 public enum SingletonVariablesShare {
     INSTANCE;
-    private Map<String, Map<String, String>> atmGeoLoc = new HashMap<>();
+
     private HbaseDAO hbaseDAO = new HbaseDAO();
 
-    public Map<String, Map<String, String>> getAtmGeoLoc() {
-        return atmGeoLoc;
-    }
+//    private Map<String, Map<String, String>> atmGeoLoc = new HashMap<>();
 
-    public void setAtmGeoLoc(Map<String, Map<String, String>> atmGeoLoc) {
-        this.atmGeoLoc = atmGeoLoc;
-    }
+//
+//    public Map<String, Map<String, String>> getAtmGeoLoc() {
+//        return atmGeoLoc;
+//    }
+//
+//    public void setAtmGeoLoc(Map<String, Map<String, String>> atmGeoLoc) {
+//        this.atmGeoLoc = atmGeoLoc;
+//    }
 
     public HbaseDAO getHbaseDAO() {
         return hbaseDAO;

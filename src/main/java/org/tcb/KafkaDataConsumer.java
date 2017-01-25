@@ -10,7 +10,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.tcb.avro.type_a;
 import org.tcb.dao.HbaseDAO;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -23,22 +22,19 @@ import java.util.stream.Collectors;
 
 public class KafkaDataConsumer {
 
-    private final Schema schema_a = type_a.getClassSchema();
     private static KafkaDataConsumer toHbaseConsumer;
+    private final Schema schema_a = type_a.getClassSchema();
     protected String topic;
     protected Properties kafkaProps;
-    private KafkaConsumer<String, type_a> consumer;
-
     protected HbaseDAO hbaseDao;
     protected String hbaseTableName;
     protected String hbaseColumnFamilyName;
-
-
+    private KafkaConsumer<String, type_a> consumer;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         // currently hardcoding a lot of parameters, for simplicity
-        String groupId = "reader5";
+        String groupId = "reader6";
         String topic = "testa";
         String url = "http://schema-registry:8081";
         String brokers = "kafka0:9090,kafka1:9091,kafka2:9092";
@@ -64,9 +60,9 @@ public class KafkaDataConsumer {
         kafkaConsumer.kafkaProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         kafkaConsumer.kafkaProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
-        //kafkaConsumer.hbaseDao = SingletonVariablesShare.INSTANCE.getHbaseDAO();
-        kafkaConsumer.hbaseColumnFamilyName = "flux";
-        kafkaConsumer.hbaseTableName = "dba:fluxa";
+        kafkaConsumer.hbaseDao = SingletonVariablesShare.INSTANCE.getHbaseDAO();
+        kafkaConsumer.hbaseColumnFamilyName = "colFam";
+        kafkaConsumer.hbaseTableName = "myapp:table_A";
         return kafkaConsumer;
     }
 
@@ -90,19 +86,15 @@ public class KafkaDataConsumer {
             System.out.println(System.currentTimeMillis() + "  --  waiting for data...");
             for (ConsumerRecord<String, type_a> record : records) {
 
-                for(String name: fieldNames)  {
-                    System.out.println(name +" : " +record.value().get(name));
+                for (String name : fieldNames) {
+                    System.out.println(name + " : " + record.value().get(name));
+                    int i=0;
+                    hbaseDao.save(hbaseTableName, hbaseColumnFamilyName, name, "row"+Integer.toString(i), record.value().get(name));
+                    i++;
 
                 }
 
 
-
-                ///
-//                String valueHbaseString = hbaseDao.get(hbaseTableName,hbaseColumnFamilyName,hbaseColumnName, id);
-//                int valueHbase = valueHbaseString == "" ? 0 : Integer.parseInt(valueHbaseString);
-//                int valueUpdated = valueHbase + Integer.parseInt(value);
-//                hbaseDao.save(hbaseTableName,hbaseColumnFamilyName,hbaseColumnName, id, String.valueOf(valueUpdated));
-                ////
             }
             consumer.commitSync();
         }
