@@ -101,7 +101,9 @@ public class HbaseDAO {
         }
     }
 
-    public void save(String _tableName, String _columnFamily, String _columnName, String id, Object _value) {
+
+
+    public void save(String _tableName, String _columnFamily, String _columnName, String id,  String _value) {
         if (_DEBUG)
             System.out.println("Saving value...");
         try {
@@ -188,7 +190,7 @@ public class HbaseDAO {
 
     public static final void main(String... args) {
         HbaseDAO hbDAO = new HbaseDAO();
-        //ah.createNamespace("atm");
+        hbDAO.createNamespace("myapp");
         hbDAO.createTable("myapp","tableA","colFam");
 
 //        System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "1", "GeoLoc"));

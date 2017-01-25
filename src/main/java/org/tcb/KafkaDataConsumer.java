@@ -34,7 +34,7 @@ public class KafkaDataConsumer {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         // currently hardcoding a lot of parameters, for simplicity
-        String groupId = "reader6";
+        String groupId = "read";
         String topic = "testa";
         String url = "http://schema-registry:8081";
         String brokers = "kafka0:9090,kafka1:9091,kafka2:9092";
@@ -62,7 +62,7 @@ public class KafkaDataConsumer {
 
         kafkaConsumer.hbaseDao = SingletonVariablesShare.INSTANCE.getHbaseDAO();
         kafkaConsumer.hbaseColumnFamilyName = "colFam";
-        kafkaConsumer.hbaseTableName = "myapp:table_A";
+        kafkaConsumer.hbaseTableName = "myapp:tableA";
         return kafkaConsumer;
     }
 
@@ -84,16 +84,16 @@ public class KafkaDataConsumer {
         while (true) {
             ConsumerRecords<String, type_a> records = consumer.poll(1000);
             System.out.println(System.currentTimeMillis() + "  --  waiting for data...");
+            int i = 0;
             for (ConsumerRecord<String, type_a> record : records) {
 
                 for (String name : fieldNames) {
                     System.out.println(name + " : " + record.value().get(name));
-                    int i=0;
-                    hbaseDao.save(hbaseTableName, hbaseColumnFamilyName, name, "row"+Integer.toString(i), record.value().get(name));
-                    i++;
+                    hbaseDao.save(hbaseTableName, hbaseColumnFamilyName, name, "row" + Integer.toString(i), String.valueOf(record.value().get(name)));
+
 
                 }
-
+                i++;
 
             }
             consumer.commitSync();
