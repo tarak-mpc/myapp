@@ -149,6 +149,5 @@
     <orderEntry type="library" name="Maven: org.apache.curator:curator-framework:2.7.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.0" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.kafka:kafka-log4j-appender:0.10.1.0" level="project" />
   </component>
 </module>
