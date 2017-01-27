@@ -3,21 +3,28 @@ package org.tcb;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+
 import org.tcb.avro.type_a;
+
 import org.tcb.dao.HbaseDAO;
 
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import static org.tcb.Elasticsearch.createClient;
+import static org.tcb.Elasticsearch.createIndex;
 
-//        import hbaseAdo.HbaseDAO;
+
+
 
 
 public class KafkaDataConsumer {
@@ -29,15 +36,22 @@ public class KafkaDataConsumer {
     protected HbaseDAO hbaseDao;
     protected String hbaseTableName;
     protected String hbaseColumnFamilyName;
-    private KafkaConsumer<String, type_a> consumer;
+    private KafkaConsumer<String, GenericRecord> consumer;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         // currently hardcoding a lot of parameters, for simplicity
-        String groupId = "read";
+        String groupId = "read4";
         String topic = "testa";
         String url = "http://schema-registry:8081";
         String brokers = "kafka0:9090,kafka1:9091,kafka2:9092";
+
+        try {
+            createClient();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
 
         toHbaseConsumer = new KafkaDataConsumer().ConsumerBuilder(brokers, topic, groupId, url);
         toHbaseConsumer.startReading();
@@ -82,11 +96,11 @@ public class KafkaDataConsumer {
 
 
         while (true) {
-            ConsumerRecords<String, type_a> records = consumer.poll(1000);
+            ConsumerRecords<String, GenericRecord> records = consumer.poll(1000);
             System.out.println(System.currentTimeMillis() + "  --  waiting for data...");
             int i = 0;
-            for (ConsumerRecord<String, type_a> record : records) {
-
+            for (ConsumerRecord<String, GenericRecord> record : records) {
+                String _id = createIndex(record.value().toString());
                 for (String name : fieldNames) {
                     System.out.println(name + " : " + record.value().get(name));
                     hbaseDao.save(hbaseTableName, hbaseColumnFamilyName, name, "row" + Integer.toString(i), String.valueOf(record.value().get(name)));

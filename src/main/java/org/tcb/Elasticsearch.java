@@ -11,7 +11,6 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.sort.FieldSortBuilder;
@@ -31,7 +30,7 @@ public class Elasticsearch {
     /**
      * es index
      */
-    private static final String ES_INDEX = "database_test";
+    private static final String ES_INDEX = "database_three";
     /**
      * es type
      */
@@ -41,23 +40,23 @@ public class Elasticsearch {
 
     public static void main(String[] args) throws Exception {
 
-        createClient();
-
-        String _id = createIndex();
-
-        getDataResponse(_id);
-
-        updateData(_id);
-
-        getDataResponse(_id);
-
-        QueryBuilder builder = QueryBuilders.matchAllQuery();
-        //// QueryBuilder builder = QueryBuilders.termQuery("username", "pomelo");
-        queryByScroll(ES_INDEX, builder);
-
-        deleteDataResponse(_id);
-
-        shutdown();
+//        createClient();
+//
+//        String _id = createIndex();
+//
+//        getDataResponse(_id);
+//
+//        updateData(_id);
+//
+//        getDataResponse(_id);
+//
+//        QueryBuilder builder = QueryBuilders.matchAllQuery();
+//        //// QueryBuilder builder = QueryBuilders.termQuery("username", "pomelo");
+//        queryByScroll(ES_INDEX, builder);
+//
+//        deleteDataResponse(_id);
+//
+//        shutdown();
     }
 
     public static void createClient() throws UnknownHostException {
@@ -77,9 +76,8 @@ public class Elasticsearch {
      *
      * @return _id
      */
-    public static String createIndex() {
-        String json = "{" + "\"username\":\"pomelo\"," + "\"postDate\":\"" + DateFormat.getInstance().format(new Date()) + "\","
-                + "\"message\":\"create\"" + "}";
+    public static String createIndex(String json) {
+
 
         IndexResponse response = client.prepareIndex(ES_INDEX, ES_TYPE).setSource(json).get();
 
