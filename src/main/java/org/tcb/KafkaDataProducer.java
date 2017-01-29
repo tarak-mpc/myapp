@@ -30,7 +30,6 @@ public class KafkaDataProducer {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         producer = new KafkaProducer<String, String>(props);
 
-
     }
 
     public void sendMessage(String key, String value){

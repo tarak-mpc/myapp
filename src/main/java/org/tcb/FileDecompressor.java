@@ -1,11 +1,6 @@
 package org.tcb;
 
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -15,11 +10,13 @@ import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.CompressionCodecFactory;
 
-
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
 
 
 public class FileDecompressor {
-
 
 
     public static void main(String[] args) throws Exception {
@@ -71,21 +68,21 @@ public class FileDecompressor {
 
                 while (line != null) {
 
-                    if (line.contains("END") || line.contains(".txt") || (line.trim().length() == 0) ) {
+                    if (line.contains("END") || line.contains(".txt") || (line.trim().length() == 0)) {
                         line = br.readLine();
                         continue;
                     }
-                    if (line.contains("MONTANT_TTC;DATE_ECHEANCE_FACTURE")){
+                    if (line.contains("MONTANT_TTC;DATE_ECHEANCE_FACTURE")) {
                         type = "type_a";
                         line = br.readLine();
                         continue;
                     }
-                    if (line.contains("DATE_ACTION_COMMERCIALE")){
+                    if (line.contains("DATE_ACTION_COMMERCIALE")) {
                         type = "type_b";
                         line = br.readLine();
                         continue;
                     }
-                    if (line.contains("ADRESSE_MAIL;TEL_FIXE;TEL_BUREAU;TEL_PORTABLE")){
+                    if (line.contains("ADRESSE_MAIL;TEL_FIXE;TEL_BUREAU;TEL_PORTABLE")) {
                         type = "type_c";
                         line = br.readLine();
                         continue;

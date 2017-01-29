@@ -1,21 +1,15 @@
 package org.tcb;
 
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.streams.kstream.Predicate;
-import org.apache.kafka.streams.processor.StreamPartitioner;
-import org.tcb.avro.type_a;
-import org.tcb.avro.type_b;
-import org.tcb.avro.type_c;
-
-import org.tcb.utils.SpecificAvroSerde;
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KStreamBuilder;
-
+import org.apache.kafka.streams.kstream.Predicate;
+import org.tcb.utils.SpecificAvroSerde;
 
 import java.util.Properties;
 
@@ -37,7 +31,7 @@ public class DataOrganizer {
 
         KStreamBuilder builder = new KStreamBuilder();
 
-        KStream<String, String> dataRaw = builder.stream(stringSerde, stringSerde,"data.raw");
+        KStream<String, String> dataRaw = builder.stream(stringSerde, stringSerde, "data.raw");
 
         Predicate<String, String> isTypeA = (k, v) -> k.equals("type_a");
         Predicate<String, String> isTypeB = (k, v) -> k.equals("type_b");

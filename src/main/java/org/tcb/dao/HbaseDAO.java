@@ -2,23 +2,14 @@ package org.tcb.dao;
 
 
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.*;
+import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.util.Bytes;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.*;
-import org.apache.hadoop.hbase.client.Admin;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.client.Table;
-import org.apache.hadoop.hbase.util.Bytes;
 
 public class HbaseDAO {
 
@@ -189,50 +180,11 @@ public class HbaseDAO {
     }
 
     public static final void main(String... args) {
-        HbaseDAO hbDAO = new HbaseDAO();
-        hbDAO.createNamespace("myapp");
-        hbDAO.createTable("myapp","tableA","colFam");
+//        HbaseDAO hbDAO = new HbaseDAO();
+//        hbDAO.createNamespace("myapp");
+//        hbDAO.createTable("myapp","tableA","colFam");
 
-//        System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "1", "GeoLoc"));
-//        System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "2", "Total", "GeoLoc"));
-//        System.out.println(hbDAO.getValuesUnderFamiliys("atm:AtmTotalCash", "3", "Total", "GeoLoc"));
 
-		/*
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "1", "1070");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "2", "1770");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "3", "10000");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "4", "1800");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "5", "1960");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "6", "17600");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "7", "1070");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "8", "2760");
-		 * hbDAO.save("atm:AtmTotalCash", "Total", "cash", "9", "3760");
-		 */
-
-		/*
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "1", "45.494676");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "1", "-73.562307");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "2", "45.504813");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "2", "-73.577156");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "3", "45.495203");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "3", "-73.578851");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "4", "45.526374");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "4", "-73.569345");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "5", "45.534116");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "5", "-73.564314");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "6", "45.503219");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "6", "-73.618183");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "7", "45.516361");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "7", "-73.577671");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "8", "45.489599");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "8", "-73.566572");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lat", "9", "45.509475");
-		 * hbDAO.save("atm:AtmTotalCash", "GeoLoc", "lng", "9", "-73553467");
-		 */
-        // hbDAO.delete("atm:AtmTotalCash", 1);
-        // hbDAO.delete("atm:AtmTotalCash", 2);
-        // System.out.println("Value: " + hbDAO.get("atm:AtmTotalCash", "Total",
-        // "cash", 2));
     }
 
 }

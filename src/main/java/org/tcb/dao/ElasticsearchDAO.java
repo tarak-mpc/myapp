@@ -1,4 +1,4 @@
-package org.tcb;
+package org.tcb.dao;
 
 import com.alibaba.fastjson.JSON;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -25,12 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class Elasticsearch {
+public class ElasticsearchDAO {
 
-    /**
-     * es index
-     */
-    private static final String ES_INDEX = "database_three";
     /**
      * es type
      */
@@ -38,45 +34,27 @@ public class Elasticsearch {
 
     private static TransportClient client = null;
 
-    public static void main(String[] args) throws Exception {
-
-//        createClient();
-//
-//        String _id = createIndex();
-//
-//        getDataResponse(_id);
-//
-//        updateData(_id);
-//
-//        getDataResponse(_id);
-//
-//        QueryBuilder builder = QueryBuilders.matchAllQuery();
-//        //// QueryBuilder builder = QueryBuilders.termQuery("username", "pomelo");
-//        queryByScroll(ES_INDEX, builder);
-//
-//        deleteDataResponse(_id);
-//
-//        shutdown();
-    }
-
-    public static void createClient() throws UnknownHostException {
+    public ElasticsearchDAO() {
         if (client == null) {
-            synchronized (Elasticsearch.class) {
+            synchronized (ElasticsearchDAO.class) {
                 if (client != null) {
                     return;
                 }
                 Settings settings = Settings.builder().put("cluster.name", "elasticsearch").build();
-                client = new PreBuiltTransportClient(settings)
-                        .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("elasticsearch"), 9300));
+                try {
+                    client = new PreBuiltTransportClient(settings)
+                            .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("elasticsearch"), 9300));
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     /**
-     *
      * @return _id
      */
-    public static String createIndex(String json) {
+    public String createIndex(String ES_INDEX, String json) {
 
 
         IndexResponse response = client.prepareIndex(ES_INDEX, ES_TYPE).setSource(json).get();
@@ -87,22 +65,20 @@ public class Elasticsearch {
     }
 
     /**
-     *
      * @param _id
      * @return GetResponse
      */
-    public static GetResponse getDataResponse(String _id) {
+    public GetResponse getDataResponse(String ES_INDEX, String _id) {
         GetResponse response = client.prepareGet(ES_INDEX, ES_TYPE, _id).get();
         System.out.println(String.format("get data response: %s", JSON.toJSONString(response.getSource())));
         return response;
     }
 
     /**
-     *
      * @param queryBuilder
      * @return List
      */
-    public static List<String> queryDataList(QueryBuilder queryBuilder) {
+    public List<String> queryDataList(String ES_INDEX, QueryBuilder queryBuilder) {
         SearchResponse sResponse = client.prepareSearch(ES_INDEX).setTypes(ES_TYPE).setQuery(queryBuilder).setSize(1000).execute().actionGet();
         SearchHits hits = sResponse.getHits();
 
@@ -126,12 +102,11 @@ public class Elasticsearch {
     }
 
     /**
-     *
      * @param index
      * @param queryBuilder
      * @return list
      */
-    public static List<String> queryByScroll(String index, QueryBuilder queryBuilder) {
+    public List<String> queryByScroll(String index, QueryBuilder queryBuilder) {
 
         // 100 hits per shard will be returned for each scroll
         SearchResponse scrollResp = client.prepareSearch(index).addSort(FieldSortBuilder.DOC_FIELD_NAME,
@@ -156,22 +131,20 @@ public class Elasticsearch {
     }
 
     /**
-     *
      * @param _id
      * @return DeleteResponse
      */
-    public static DeleteResponse deleteDataResponse(String _id) {
+    public DeleteResponse deleteDataResponse(String ES_INDEX, String _id) {
         DeleteResponse response = client.prepareDelete(ES_INDEX, ES_TYPE, _id).get();
         System.out.println(String.format("delete data response: %s", JSON.toJSONString(response)));
         return response;
     }
 
     /**
-     *
      * @param _id
      * @throws Exception
      */
-    public static void updateData(String _id) throws Exception {
+    public void updateData(String ES_INDEX, String _id) throws Exception {
         UpdateRequest updateRequest = new UpdateRequest();
         updateRequest.index(ES_INDEX);
         updateRequest.type(ES_TYPE);
@@ -185,10 +158,26 @@ public class Elasticsearch {
         client.update(updateRequest).get();
     }
 
-    private static void shutdown() {
+    public void shutdown() {
         if (client != null) {
             client.close();
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+
+//        createClient();
+//        String _id = createIndex();
+//        getDataResponse(_id);
+//        updateData(_id);
+//        getDataResponse(_id);
+//
+//        QueryBuilder builder = QueryBuilders.matchAllQuery();
+//        //// QueryBuilder builder = QueryBuilders.termQuery("username", "pomelo");
+//        queryByScroll(ES_INDEX, builder);
+//
+//        deleteDataResponse(_id);
+//        shutdown();
     }
 
 }
