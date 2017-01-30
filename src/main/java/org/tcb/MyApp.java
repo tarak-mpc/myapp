@@ -2,40 +2,53 @@ package org.tcb;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-
+import java.util.stream.Stream;
 
 
 public class MyApp {
-    private static final int MAX_NUMBER_THREADS = 1;
+    private static final int MAX_NUMBER_THREADS = 3;
+    private static ExecutorService executorService;
 
-    public static void main(String[] args ) throws IOException {
+    public static void main(String[] args) throws IOException {
+
+
+        try(Stream<Path> paths = Files.walk(Paths.get("src/main/resources"))) {
+            paths.forEach(filePath -> {
+
+                if (Files.isRegularFile(filePath) && filePath.getFileName().toString().startsWith("config")) {
+                    System.out.println(filePath);
+                    Properties props = new Properties();
+
+                    try {
+                        props.load(new FileInputStream(filePath.toFile()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    String topic = props.getProperty("topic");
+                    String groupId = props.getProperty("groupId");
+                    String hbaseTableName = props.getProperty("hbaseTableName");
+                    String hbaseColumnFamilyName = props.getProperty("hbaseColumnFamilyName");
+                    String esIndex = props.getProperty("esIndex");
+                    String schemaFile = props.getProperty("schemaFile");
 
 //        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-//
-//        KafkaDataConsumeLoop consumer = new KafkaDataConsumeLoop();
+//        KafkaDataConsumeLoop consumer = new KafkaDataConsumeLoop(topic, groupId, hbaseTableName, hbaseColumnFamilyName, esIndex, schemaFile);
 //        executor.execute(consumer);
 
-        Properties props = new Properties();
-        InputStream input = null;
 
-        input = new FileInputStream("src/main/resources/configA.properties");
+                    executorService = Executors.newFixedThreadPool(MAX_NUMBER_THREADS);
+                    executorService.execute(new KafkaDataConsumeLoop(topic, groupId, hbaseTableName, hbaseColumnFamilyName, esIndex, schemaFile));
 
-        props.load(input);
-
-        String topic = props.getProperty("topic");
-        String groupId = props.getProperty("groupId");
-        String hbaseTableName = props.getProperty("hbaseTableName");
-        String hbaseColumnFamilyName = props.getProperty("hbaseColumnFamilyName");
-        String esIndex = props.getProperty("esIndex");
-        String schemaFile = props.getProperty("schemaFile");
-
-        ExecutorService executorService = Executors.newFixedThreadPool(MAX_NUMBER_THREADS);
-        executorService.submit(new KafkaDataConsumeLoop(topic, groupId, hbaseTableName, hbaseColumnFamilyName, esIndex, schemaFile));
+                }
+            });
+        }
         executorService.shutdown();
     }
 }

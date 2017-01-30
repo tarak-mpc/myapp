@@ -11,7 +11,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.tcb.dao.ElasticsearchDAO;
 import org.tcb.dao.HbaseDAO;
 
-
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -49,8 +50,8 @@ public class KafkaDataConsumeLoop implements Runnable {
         this.shutdown = new AtomicBoolean(false);
         this.shutdownLatch = new CountDownLatch(1);
 
-        this.hbaseDao = SingletonInstance.INSTANCE.getHbaseDAO();
-        this.elasticsearchDAO = SingletonInstance.INSTANCE.getElasticsearchDAO();
+        this.hbaseDao = HbaseInstance.INSTANCE.getHbaseDAO();
+        this.elasticsearchDAO = ElasticsearchInstance.INSTANCE.getElasticsearchDAO();
 
         this.hbaseColumnFamilyName = hbaseColumnFamilyName;
         this.hbaseTableName = hbaseTableName ;
@@ -60,7 +61,9 @@ public class KafkaDataConsumeLoop implements Runnable {
     }
 
     public void process(ConsumerRecord<String, GenericRecord> record) {
+        System.out.println("record ==> ES ");
         String id = elasticsearchDAO.createIndex(esIndex,record.value().toString());
+        System.out.println("record ==> Hbase ");
         for (String name : fieldNames) {
 //            System.out.println(name + " : " + record.value().get(name));
             hbaseDao.save(hbaseTableName, hbaseColumnFamilyName, name, "row" + Integer.toString((int) record.offset()), String.valueOf(record.value().get(name)));
@@ -70,19 +73,21 @@ public class KafkaDataConsumeLoop implements Runnable {
     public void run() {
         try {
             consumer.subscribe(Collections.singletonList(topic));
-            Schema schema = new Schema.Parser().parse(schemaFile);
+            Schema schema = new Schema.Parser().parse(new File(schemaFile));
             this.fieldNames = schema.getFields().stream().map(Schema.Field::name).collect(Collectors.toList());
 
             while (!shutdown.get()) {
-                //System.out.println("Listening for record.");
+                System.out.println("Listening for record.");
                 ConsumerRecords<String, GenericRecord> records = consumer.poll(1000);
                 System.out.println(System.currentTimeMillis() + "  --  waiting for data...");
-                //System.out.println("Processing record.");
+                System.out.println("Processing record.");
                 records.forEach(this::process);
-                //System.out.println("Finished.");
+                System.out.println("Finished.");
                 consumer.commitSync();
 
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             consumer.close();
             hbaseDao.closeConnection();

@@ -30,16 +30,16 @@ public class ElasticsearchDAO {
     /**
      * es type
      */
-    private static final String ES_TYPE = "user";
+    private String ES_TYPE = "user";
 
-    private static TransportClient client = null;
+    protected TransportClient client ;
 
     public ElasticsearchDAO() {
-        if (client == null) {
-            synchronized (ElasticsearchDAO.class) {
-                if (client != null) {
-                    return;
-                }
+//        if (client == null) {
+//            synchronized (ElasticsearchDAO.class) {
+//                if (client != null) {
+//                    return;
+//                }
                 Settings settings = Settings.builder().put("cluster.name", "elasticsearch").build();
                 try {
                     client = new PreBuiltTransportClient(settings)
@@ -47,8 +47,8 @@ public class ElasticsearchDAO {
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 }
-            }
-        }
+//            }
+//        }
     }
 
     /**
@@ -166,7 +166,16 @@ public class ElasticsearchDAO {
 
     public static void main(String[] args) throws Exception {
 
-//        createClient();
+
+//        ElasticsearchDAO elasticsearchDAO1 = ElasticsearchInstance.INSTANCE.getElasticsearchDAO();
+//
+//        elasticsearchDAO1.createIndex("hello","{" + "\"username\":\"lisi\"," + "\"postDate\":\"" + DateFormat.getInstance().format(new Date()) + "\","
+//                + "\"message\":\"update\"" + "}");
+//
+//        ElasticsearchDAO elasticsearchDAO2 = ElasticsearchInstance.INSTANCE.getElasticsearchDAO();
+//
+//        elasticsearchDAO2.createIndex("hello","{" + "\"username\":\"lisi\"," + "\"postDate\":\"" + DateFormat.getInstance().format(new Date()) + "\","
+//                + "\"message\":\"update\"" + "}");
 //        String _id = createIndex();
 //        getDataResponse(_id);
 //        updateData(_id);
@@ -179,5 +188,7 @@ public class ElasticsearchDAO {
 //        deleteDataResponse(_id);
 //        shutdown();
     }
+
+
 
 }
