@@ -32,7 +32,7 @@ public class KafkaDataConsumeLoop implements Runnable {
     private final String schemaFile;
     private List<String>  fieldNames;
 
-    public KafkaDataConsumeLoop(String topic, String groupId, String hbaseColumnFamilyName, String hbaseTableName, String esIndex, String schemaFile) {
+    public KafkaDataConsumeLoop(String topic, String groupId, String hbaseTableName, String hbaseColumnFamilyName, String esIndex, String schemaFile) {
         Properties props = new Properties();
 
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
