@@ -17,6 +17,7 @@ public class MyApp {
 
     public static void main(String[] args) throws IOException {
 
+        executorService = Executors.newFixedThreadPool(MAX_NUMBER_THREADS);
 
         try(Stream<Path> paths = Files.walk(Paths.get("src/main/resources"))) {
             paths.forEach(filePath -> {
@@ -39,7 +40,6 @@ public class MyApp {
                     String schemaFile = props.getProperty("schemaFile");
 
 
-                    executorService = Executors.newFixedThreadPool(MAX_NUMBER_THREADS);
                     executorService.execute(new KafkaDataConsumeLoop(topic, groupId, hbaseTableName, hbaseColumnFamilyName, esIndex, schemaFile));
 
                 }
