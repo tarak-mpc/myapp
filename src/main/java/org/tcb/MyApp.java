@@ -38,10 +38,6 @@ public class MyApp {
                     String esIndex = props.getProperty("esIndex");
                     String schemaFile = props.getProperty("schemaFile");
 
-//        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-//        KafkaDataConsumeLoop consumer = new KafkaDataConsumeLoop(topic, groupId, hbaseTableName, hbaseColumnFamilyName, esIndex, schemaFile);
-//        executor.execute(consumer);
-
 
                     executorService = Executors.newFixedThreadPool(MAX_NUMBER_THREADS);
                     executorService.execute(new KafkaDataConsumeLoop(topic, groupId, hbaseTableName, hbaseColumnFamilyName, esIndex, schemaFile));

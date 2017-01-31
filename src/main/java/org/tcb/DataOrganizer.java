@@ -17,7 +17,7 @@ import java.util.Properties;
 public class DataOrganizer {
     public static void main(String[] args) throws Exception {
         Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "data-organizer-monitor");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "data-organizer-monitor1");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka0:9090,kafka1:9091,kafka2:9092");
         props.put(StreamsConfig.ZOOKEEPER_CONNECT_CONFIG, "zookeeper:2181");
         props.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://schema-registry:8081");
@@ -42,18 +42,18 @@ public class DataOrganizer {
         filteredStreams[0]
                 .map(DataParser::parseDataTypeA)
                 .filter((k, v) -> k != null && v != null)
-                .to("testa");
+                .to("parsed.a");
 
         filteredStreams[1]
                 .map(DataParser::parseDataTypeB)
                 .filter((k, v) -> k != null && v != null)
-                .to("testb");
+                .to("parsed.b");
 
 
         filteredStreams[2]
                 .map(DataParser::parseDataTypeC)
                 .filter((k, v) -> k != null && v != null)
-                .to("testc");
+                .to("parsed.c");
 
 
         final KafkaStreams streams = new KafkaStreams(builder, props);
